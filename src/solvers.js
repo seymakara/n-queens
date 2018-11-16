@@ -47,6 +47,11 @@ window.findNRooksSolution = function(n) {
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0; //fixme
   var board = new Board({n : n});
+  var usedKeys = {}
+
+  for (var i = 0; i < n; i++){ // generate index of columns to check if column has been used in the current iteration 
+    usedKeys[i] = false;
+  }
 
   var searchRookSolution = function(row){
     
@@ -54,13 +59,18 @@ window.countNRooksSolutions = function(n) {
       solutionCount++;
       return;
     }
-  
-    for (var i = 0; i < n; i++){
-      board.rows()[row][i] = 1;  
-      if(!board.hasAnyRooksConflicts()){
-        searchRookSolution(row + 1) 
+    for (var i = 0; i < n; i++){ 
+      if (usedKeys[i]){ // if the column is used we skip that column and continue with the next.
+        continue;
       }
-      board.rows()[row][i] = 0;      
+      counter++
+      board.rows()[row][i] = 1;
+      usedKeys[i] = true;  
+      if(!board.hasAnyRooksConflicts()){
+        searchRookSolution(row + 1); 
+      }
+      board.rows()[row][i] = 0;
+      usedKeys[i] = false;      
     }
   }
  
