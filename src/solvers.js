@@ -21,7 +21,6 @@
 
 window.findNRooksSolution = function(n) {
   var solution = new Board({n : n});
-  // var rows = solution.rows() 
   var numOfRooks = n;
 
   for (var i = 0; i < n; i++){
@@ -74,56 +73,43 @@ window.countNRooksSolutions = function(n) {
   }
  
   searchRookSolution(0);
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount.length);
+  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = new Board({n : n});
-  // var rows = solution.rows() 
-  var numOfQueens = n;
-  var solutionStorage = [];
 
-  var spaceChecker = function (arg1) {
-    for (var i = 0; i < n; i++){
-      // console.log("i", i)
-      for(var j = 0; j < n; j++){
+  var solutionCount = 0; //fixme
+  var board = new Board({n : n});
+  // var usedKeys = {}
 
-        // if (i === 0 && j < 2){
-        //   // console.log(arg1)
-        //   continue;
-        // }
-       
-        solution.rows()[i][j] = 1; // add queen and reduce queen count
-        numOfQueens--
-        //break;
-        // console.log("solution1", solution.rows());
-        // if (i === 2 && j ===0){
-        //   console.log("row", solution.hasRowConflictAt(i))
-        //   console.log("col", solution.hasColConflictAt(i))
-        //   console.log("major", solution.hasMajorDiagonalConflictAt(j-i))
-        //   console.log("minor", solution.hasMinorDiagonalConflictAt(j+i))
-        // }
-        
-        if(solution.hasRowConflictAt(i) || solution.hasColConflictAt(j) || solution.hasMajorDiagonalConflictAt(j-i) || solution.hasMinorDiagonalConflictAt(j+i)){ // if there is conflict at the row or column, remove the rook
-          solution.rows()[i][j] = 0;
-          numOfQueens++
-        }
-      }
+  // for (var i = 0; i < n; i++){ // generate index of columns to check if column has been used in the current iteration 
+  //   usedKeys[i] = false;
+  // }
+
+  var searchQueenSolution = function(row){
+    if (row === n ) {
+      return board.rows();
     }
-    solutionStorage.push(solution.rows());
+    for (var i = 0; i < n; i++){ 
+      // if (usedKeys[i]){ // if the column is used we skip that column and continue with the next.
+      //   continue;
+      // }
+      board.rows()[row][i] = 1;
+      // usedKeys[i] = true;  
+      if(!board.hasAnyQueensConflicts()){
+        return searchQueenSolution(row + 1); 
+        board.rows()[row][i] = 0;
+      }
+      // usedKeys[i] = false;      
+    }
   }
+  searchQueenSolution(0);
 
-      //spaceChecker();
-      spaceChecker();
-      
-      // console.log(solutionStorage);
-  
-  if(numOfQueens === 0){
-    // console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-    return solution.rows();
-  }
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  return board.rows();
+
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
