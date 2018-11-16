@@ -63,7 +63,6 @@ window.countNRooksSolutions = function(n) {
       if (usedKeys[i]){ // if the column is used we skip that column and continue with the next.
         continue;
       }
-      counter++
       board.rows()[row][i] = 1;
       usedKeys[i] = true;  
       if(!board.hasAnyRooksConflicts()){
@@ -129,8 +128,36 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0; //fixme
+  var board = new Board({n : n});
+  var usedKeys = {}
 
-  // console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  for (var i = 0; i < n; i++){ // generate index of columns to check if column has been used in the current iteration 
+    usedKeys[i] = false;
+  }
+
+  var searchQueenSolution = function(row){
+    
+    if (row === n ) {
+      solutionCount++;
+      return;
+    }
+    for (var i = 0; i < n; i++){ 
+      if (usedKeys[i]){ // if the column is used we skip that column and continue with the next.
+        continue;
+      }
+      board.rows()[row][i] = 1;
+      usedKeys[i] = true;  
+      if(!board.hasAnyQueenConflictsOn(row, i)){
+        searchQueenSolution(row + 1); 
+      }
+      board.rows()[row][i] = 0;
+      usedKeys[i] = false;      
+    }
+  }
+ 
+  searchQueenSolution(0);
+
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
