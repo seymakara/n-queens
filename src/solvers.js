@@ -35,7 +35,7 @@ window.findNRooksSolution = function(n) {
       }
 
       if(numOfRooks === 0){
-        // console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+        console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
         return solution.rows();
       }
     }
@@ -45,9 +45,27 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0; //fixme
+  var board = new Board({n : n});
 
-  // console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  var searchRookSolution = function(row){
+    
+    if (row === n ) {
+      solutionCount++;
+      return;
+    }
+  
+    for (var i = 0; i < n; i++){
+      board.rows()[row][i] = 1;  
+      if(!board.hasAnyRooksConflicts()){
+        searchRookSolution(row + 1) 
+      }
+      board.rows()[row][i] = 0;      
+    }
+  }
+ 
+  searchRookSolution(0);
+  console.log('Number of solutions for ' + n + ' rooks:', solutionCount.length);
   return solutionCount;
 };
 
@@ -63,13 +81,14 @@ window.findNQueensSolution = function(n) {
       // console.log("i", i)
       for(var j = 0; j < n; j++){
 
-        if (i === 0 && j < arg1){
-          // console.log(arg1)
-          continue;
-        }
+        // if (i === 0 && j < 2){
+        //   // console.log(arg1)
+        //   continue;
+        // }
        
-        solution.rows()[i][j] = 1; // add rook and reduce rook count
+        solution.rows()[i][j] = 1; // add queen and reduce queen count
         numOfQueens--
+        //break;
         // console.log("solution1", solution.rows());
         // if (i === 2 && j ===0){
         //   console.log("row", solution.hasRowConflictAt(i))
@@ -86,19 +105,14 @@ window.findNQueensSolution = function(n) {
     }
     solutionStorage.push(solution.rows());
   }
-    
 
-      spaceChecker(1);
-
-
-   
-      //spaceChecker()
-      console.log(solutionStorage);
-  
-    
+      //spaceChecker();
+      spaceChecker();
+      
+      // console.log(solutionStorage);
   
   if(numOfQueens === 0){
-    console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+    // console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
     return solution.rows();
   }
 };
